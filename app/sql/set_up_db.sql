@@ -7,42 +7,42 @@ USE `test_db` ;
 -- Salas
 -- --------------------------------------------------
 CREATE TABLE IF NOT EXISTS `test_db`.`Salas` (
-    `IdSala` SMALLINT NOT NULL,
-    `Sala` VARCHAR(60) NOT NULL,
-    `TipoSala` CHAR(1) NOT NULL,
-    `Direccion` VARCHAR(60) NOT NULL,
-    `Estado` VARCHAR(45) NOT NULL,
-    `Observaciones` VARCHAR(255) NULL,
-    PRIMARY KEY (`IdSala`),
-    UNIQUE INDEX `AK_Salas_Sala` (`Sala` ASC))
-ENGINE = InnoDB;;
+  `IdSala` SMALLINT NOT NULL,
+  `Sala` VARCHAR(60) NOT NULL,
+  `TipoSala` CHAR(1) NOT NULL,
+  `Direccion` VARCHAR(60) NOT NULL,
+  `Estado` VARCHAR(45) NOT NULL,
+  `Observaciones` VARCHAR(255) NULL,
+  PRIMARY KEY (`IdSala`),
+  UNIQUE INDEX `AK_Salas_Sala` (`Sala` ASC))
+ENGINE = InnoDB;
 
 -- -------------------------------------------------
 -- Generos
 -- -------------------------------------------------
 CREATE TABLE IF NOT EXISTS `test_db`.`Generos` (
-  `IdGenero` SMALLINT NOT NULL,
-  `Genero` VARCHAR(50) NOT NULL,
-  `Estado` CHAR(1) NOT NULL,
-  PRIMARY KEY (`IdGenero`),
-  UNIQUE INDEX `AK_Generos_Genero` (`Genero` ASC))
+	`IdGenero` SMALLINT NOT NULL,
+	`Genero` VARCHAR(50) NOT NULL,
+	`Estado` CHAR(1) NOT NULL,
+	PRIMARY KEY (`IdGenero`),
+	UNIQUE INDEX `AK_Generos_Genero` (`Genero` ASC))
 ENGINE = InnoDB;
 
 -- ------------------------------------------------
 -- Butacas
 -- ------------------------------------------------
 CREATE TABLE IF NOT EXISTS `test_db`.`Butacas` (
-  `idButaca` INT NOT NULL,
-  `IdSala` SMALLINT NOT NULL,
-  `NroButaca` SMALLINT NOT NULL,
-  `Fila` SMALLINT NOT NULL,
-  `Columna` SMALLINT NOT NULL,
-  `Estado` CHAR(1) NOT NULL,
-  `Observaciones` VARCHAR(255) NULL,
-  PRIMARY KEY (`idButaca`, `IdSala`),
-  INDEX `AK_Butacas_NroButaca_IdSala` (`NroButaca` ASC, `IdSala` ASC),
-  INDEX `FK_Butacas_Salas_idx` (`IdSala` ASC),
-  CONSTRAINT `FK_Butacas_Salas`
+	`idButaca` INT NOT NULL,
+	`IdSala` SMALLINT NOT NULL,
+	`NroButaca` SMALLINT NOT NULL,
+	`Fila` SMALLINT NOT NULL,
+	`Columna` SMALLINT NOT NULL,
+	`Estado` CHAR(1) NOT NULL,
+	`Observaciones` VARCHAR(255) NULL,
+	PRIMARY KEY (`idButaca`, `IdSala`),
+	INDEX `AK_Butacas_NroButaca_IdSala` (`NroButaca` ASC, `IdSala` ASC),
+	INDEX `FK_Butacas_Salas_idx` (`IdSala` ASC),
+	CONSTRAINT `FK_Butacas_Salas`
     FOREIGN KEY (`IdSala`)
     REFERENCES `test_db`.`Salas` (`IdSala`)
     ON DELETE NO ACTION
@@ -118,7 +118,7 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Reservas` (
   INDEX `AK_Reservas_IdReserva` (`idReserva` ASC),
   INDEX `FK_Reservas_Funciones_idx` (`IdFuncion` ASC, `IdPelicula` ASC, `IdSala` ASC),
   INDEX `FK_Reservas_Butacas_idx` (`IdButaca` ASC, `IdSala` ASC),
-    CONSTRAINT `FK_Reservas_Funciones`
+  CONSTRAINT `FK_Reservas_Funciones`
       FOREIGN KEY (`IdFuncion`, `IdPelicula`, `IdSala`)
       REFERENCES `test_db`.`Funciones` (`idFuncion`, `IdPelicula`, `IdSala`)
     ON DELETE NO ACTION
