@@ -103,7 +103,10 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Funciones` (
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `CK_Funciones_Precio_Mayor_0` CHECK (`Precio` > 0),
-  CONSTRAINT `CK_Funciones_Estado_AI` CHECK (`Estado` IN ('A','I')))
+  CONSTRAINT `CK_Funciones_Estado_AI` CHECK (`Estado` IN ('A','I')),
+  CONSTRAINT `CK_Funciones_Fechas` CHECK ((`FechaInicio` IS NULL OR `FechaFin` IS NULL OR `FechaInicio` < `FechaFin`)),
+  CONSTRAINT `CK_Funciones_FechasProbables` CHECK (`FechaProbableInicio` <= `FechaProbableFin`)
+)
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
