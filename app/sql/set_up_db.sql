@@ -118,9 +118,9 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Reservas` (
   INDEX `AK_Reservas_IdReserva` (`idReserva` ASC),
   INDEX `FK_Reservas_Funciones_idx` (`IdFuncion` ASC, `IdPelicula` ASC, `IdSala` ASC),
   INDEX `FK_Reservas_Butacas_idx` (`IdButaca` ASC, `IdSala` ASC),
-  CONSTRAINT `FK_Reservas_Funciones`
-    FOREIGN KEY (`IdFuncion` , `IdPelicula` , `IdSala`)
-    REFERENCES `test_db`.`Funciones` (`idFuncion` , `idFuncion` , `IdSala`)
+    CONSTRAINT `FK_Reservas_Funciones`
+      FOREIGN KEY (`IdFuncion`, `IdPelicula`, `IdSala`)
+      REFERENCES `test_db`.`Funciones` (`idFuncion`, `IdPelicula`, `IdSala`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `FK_Reservas_Butacas`
