@@ -11,42 +11,45 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Salas` (
   `Sala` VARCHAR(60) NOT NULL,
   `TipoSala` CHAR(1) NOT NULL,
   `Direccion` VARCHAR(60) NOT NULL,
-  `Estado` VARCHAR(45) NOT NULL,
+  `Estado` CHAR(1) NOT NULL,
   `Observaciones` VARCHAR(255) NULL,
   PRIMARY KEY (`IdSala`),
-  UNIQUE INDEX `AK_Salas_Sala` (`Sala` ASC))
+  UNIQUE INDEX `AK_Salas_Sala` (`Sala` ASC),
+  CONSTRAINT `CK_Salas_Estado_AI` CHECK (`Estado` IN ('A','I')))
 ENGINE = InnoDB;
 
 -- -------------------------------------------------
 -- Generos
 -- -------------------------------------------------
 CREATE TABLE IF NOT EXISTS `test_db`.`Generos` (
-	`IdGenero` SMALLINT NOT NULL,
-	`Genero` VARCHAR(50) NOT NULL,
-	`Estado` CHAR(1) NOT NULL,
-	PRIMARY KEY (`IdGenero`),
-	UNIQUE INDEX `AK_Generos_Genero` (`Genero` ASC))
+  `IdGenero` SMALLINT NOT NULL,
+  `Genero` VARCHAR(50) NOT NULL,
+  `Estado` CHAR(1) NOT NULL,
+  PRIMARY KEY (`IdGenero`),
+  UNIQUE INDEX `AK_Generos_Genero` (`Genero` ASC),
+  CONSTRAINT `CK_Generos_Estado_AI` CHECK (`Estado` IN ('A','I')))
 ENGINE = InnoDB;
 
 -- ------------------------------------------------
 -- Butacas
 -- ------------------------------------------------
 CREATE TABLE IF NOT EXISTS `test_db`.`Butacas` (
-	`idButaca` INT NOT NULL,
-	`IdSala` SMALLINT NOT NULL,
-	`NroButaca` SMALLINT NOT NULL,
-	`Fila` SMALLINT NOT NULL,
-	`Columna` SMALLINT NOT NULL,
-	`Estado` CHAR(1) NOT NULL,
-	`Observaciones` VARCHAR(255) NULL,
-	PRIMARY KEY (`idButaca`, `IdSala`),
-	INDEX `AK_Butacas_NroButaca_IdSala` (`NroButaca` ASC, `IdSala` ASC),
-	INDEX `FK_Butacas_Salas_idx` (`IdSala` ASC),
-	CONSTRAINT `FK_Butacas_Salas`
+  `idButaca` INT NOT NULL,
+  `IdSala` SMALLINT NOT NULL,
+  `NroButaca` SMALLINT NOT NULL,
+  `Fila` SMALLINT NOT NULL,
+  `Columna` SMALLINT NOT NULL,
+  `Estado` CHAR(1) NOT NULL,
+  `Observaciones` VARCHAR(255) NULL,
+  PRIMARY KEY (`idButaca`, `IdSala`),
+  INDEX `AK_Butacas_NroButaca_IdSala` (`NroButaca` ASC, `IdSala` ASC),
+  INDEX `FK_Butacas_Salas_idx` (`IdSala` ASC),
+  CONSTRAINT `FK_Butacas_Salas`
     FOREIGN KEY (`IdSala`)
     REFERENCES `test_db`.`Salas` (`IdSala`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `CK_Butacas_Estado_AI` CHECK (`Estado` IN ('A','I')))
 ENGINE = InnoDB;
 
 -- -------------------------------------------------
@@ -67,7 +70,8 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Peliculas` (
     FOREIGN KEY (`IdGenero`)
     REFERENCES `test_db`.`Generos` (`IdGenero`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `CK_Peliculas_Estado_AI` CHECK (`Estado` IN ('A','I')))
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
@@ -97,7 +101,9 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Funciones` (
     FOREIGN KEY (`IdPelicula`)
     REFERENCES `test_db`.`Peliculas` (`idPelicula`)
     ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
+    ON UPDATE NO ACTION,
+  CONSTRAINT `CK_Funciones_Precio_Mayor_0` CHECK (`Precio` > 0),
+  CONSTRAINT `CK_Funciones_Estado_AI` CHECK (`Estado` IN ('A','I')))
 ENGINE = InnoDB;
 
 -- -----------------------------------------------------
