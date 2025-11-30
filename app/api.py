@@ -1,7 +1,6 @@
-
 import os
 from dotenv import load_dotenv
-from flask import Flask, jsonify
+from flask import Flask, request,jsonify
 from db import get_db_connection
 
 
@@ -24,6 +23,34 @@ def determinar_precio_entrada(idFuncion):
                 return jsonify({'precio': float(precio)})
             elif columns and 'MensajeError' in columns:
                 return jsonify({'error': data[0][0]}), 400
+        return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except:
+            pass
+
+@app.route('/reporte/ocupacion', methods=['GET'])
+def reporte_ocupacion():
+    id_pelicula = request.args.get('idPelicula', type=int)
+    fecha_inicio = request.args.get('fechaInicio')
+    fecha_fin = request.args.get('fechaFin')
+    if not id_pelicula or not fecha_inicio or not fecha_fin:
+        return jsonify({'error': 'Faltan parámetros: idPelicula, fechaInicio, fechaFin'}), 400
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.callproc('sp_ReporteOcupacionPorPelicula', [id_pelicula, fecha_inicio, fecha_fin])
+        for result in cursor.stored_results():
+            data = result.fetchall()
+            columns = result.column_names
+            if columns and 'MensajeError' in columns:
+                return jsonify({'error': data[0][0]}), 400
+            reporte = [dict(zip(columns, row)) for row in data]
+            return jsonify(reporte)
         return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
     except Exception as e:
         return jsonify({'error': str(e)}), 500
