@@ -28,7 +28,7 @@ SALIR: BEGIN
         TIME(f.FechaInicio) AS HoraInicio,
         f.IdSala,
         s.Sala AS NombreSala,
-        SUM(CASE WHEN r.EstaPagada = 's' THEN 1 ELSE 0 END) AS TotalButacasVendidas,
+        COUNT(r.idReserva) AS TotalButacasVendidas,
         IFNULL(SUM(CASE WHEN r.EstaPagada = 's' THEN 1 ELSE 0 END) * f.Precio, 0) AS TotalIngresosRecaudados
     FROM Funciones f
     JOIN Salas s ON f.IdSala = s.IdSala
