@@ -23,21 +23,21 @@ SALIR: BEGIN
         LEAVE SALIR;
     END IF;
 
-    SELECT 
-        f.idFuncion,
-        TIME(f.FechaInicio) AS HoraInicio,
-        f.IdSala,
-        s.Sala AS NombreSala,
-        COUNT(r.idReserva) AS TotalButacasVendidas,
-        IFNULL(SUM(CASE WHEN r.EstaPagada = 's' THEN 1 ELSE 0 END) * f.Precio, 0) AS TotalIngresosRecaudados
-    FROM Funciones f
-    JOIN Salas s ON f.IdSala = s.IdSala
-    LEFT JOIN Reservas r ON r.IdFuncion = f.idFuncion
-    WHERE f.IdPelicula = pIdPelicula
-      AND f.Estado = 'A'
-      AND f.FechaInicio IS NOT NULL
-      AND DATE(f.FechaInicio) BETWEEN pFechaInicio AND pFechaFin
-    GROUP BY f.idFuncion, f.FechaInicio, f.IdSala, s.Sala, f.Precio
-    ORDER BY f.FechaInicio;
+        SELECT 
+            f.idFuncion,
+            CAST(TIME(f.FechaInicio) AS CHAR) AS HoraInicio,
+            f.IdSala,
+            s.Sala AS NombreSala,
+            COUNT(r.idReserva) AS TotalButacasVendidas,
+            IFNULL(SUM(CASE WHEN r.EstaPagada = 's' THEN 1 ELSE 0 END) * f.Precio, 0) AS TotalIngresosRecaudados
+        FROM Funciones f
+        JOIN Salas s ON f.IdSala = s.IdSala
+        LEFT JOIN Reservas r ON r.IdFuncion = f.idFuncion
+        WHERE f.IdPelicula = pIdPelicula
+            AND f.Estado = 'A'
+            AND f.FechaInicio IS NOT NULL
+            AND DATE(f.FechaInicio) BETWEEN pFechaInicio AND pFechaFin
+        GROUP BY f.idFuncion, f.FechaInicio, f.IdSala, s.Sala, f.Precio
+        ORDER BY f.FechaInicio;
 END //
 DELIMITER ;
