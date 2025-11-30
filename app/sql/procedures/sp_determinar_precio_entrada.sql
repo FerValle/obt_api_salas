@@ -1,20 +1,19 @@
 DELIMITER //
 CREATE PROCEDURE sp_DeterminarPrecioEntrada(
-    IN pIdFuncion INT,
-    OUT pPrecioFinal DECIMAL(12,2),
-    OUT pMensaje VARCHAR(100)
+    IN pIdFuncion INT
 )
 SALIR: BEGIN
     DECLARE vPrecioFinal DECIMAL(12,2);
     DECLARE vIdGenero SMALLINT;
     DECLARE vGenero VARCHAR(50);
     DECLARE vIdSala SMALLINT;
+    DECLARE vMensaje VARCHAR(100);
 
-    SET pPrecioFinal = NULL;
-    SET pMensaje = NULL;
+    SET vPrecioFinal = NULL;
+    SET vMensaje = NULL;
 
     IF pIdFuncion IS NULL OR pIdFuncion <= 0 THEN
-        SET pMensaje = 'IdFuncion inválido';
+        SELECT 'Error: IdFuncion inválido' AS MensajeError;
         LEAVE SALIR;
     END IF;
 
@@ -28,7 +27,7 @@ SALIR: BEGIN
             AND (f.FechaFin IS NULL OR f.FechaFin > NOW());
 
     IF vPrecioFinal IS NULL THEN
-        SET pMensaje = 'Función inválida';
+        SELECT 'Error: Función inválida' AS MensajeError;
         LEAVE SALIR;
     END IF;
 
@@ -40,7 +39,6 @@ SALIR: BEGIN
         SET vPrecioFinal = vPrecioFinal * 1.05;
     END IF;
 
-    SET pPrecioFinal = vPrecioFinal;
-    SET pMensaje = 'OK';
+    SELECT vPrecioFinal AS Precio;
 END //
 DELIMITER ;
