@@ -24,7 +24,7 @@ SALIR: BEGIN
     LEAVE SALIR;
   END IF;
 
-  SELECT DATE(FechaProbableInicio) INTO vFechaInicio
+  SELECT DATE(FechaInicio) INTO vFechaInicio
     FROM Funciones
     WHERE idFuncion = pIdFuncion;
 
@@ -40,7 +40,7 @@ SALIR: BEGIN
   WHERE r.DNI = pDNI
     AND UPPER(r.EstaPagada) = 'S'
     AND r.FechaBaja IS NULL
-    AND DATE(f.FechaProbableInicio) = vFechaInicio;
+    AND DATE(f.FechaInicio) = vFechaInicio;
 
   IF vReservasActivas >= 4 THEN
     SELECT 'Error: El DNI ya tiene 4 reservas activas para esa fecha' AS MensajeError;
