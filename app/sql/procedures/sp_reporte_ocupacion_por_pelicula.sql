@@ -7,6 +7,11 @@ CREATE PROCEDURE sp_ReporteOcupacionPorPelicula(
 SALIR: BEGIN
         DECLARE vExistePelicula INT DEFAULT 0;
 
+        IF pIdPelicula IS NULL OR pIdPelicula <= 0 THEN
+            SELECT 'Error: IdPelicula inválido' AS MensajeError;
+            LEAVE SALIR;
+        END IF;
+
         SELECT COUNT(*) INTO vExistePelicula FROM Peliculas WHERE idPelicula = pIdPelicula;
         IF vExistePelicula = 0 THEN
             SELECT 'Error: Película inexistente' AS MensajeError;
@@ -29,7 +34,7 @@ SALIR: BEGIN
             f.IdSala,
             s.Sala AS NombreSala,
             COUNT(r.idReserva) AS TotalButacasVendidas,
-            IFNULL(SUM(CASE WHEN r.EstaPagada = 's' THEN 1 ELSE 0 END) * f.Precio, 0) AS TotalIngresosRecaudados
+            IFNULL(SUM(CASE WHEN UPPER(r.EstaPagada) = 'S' THEN 1 ELSE 0 END) * f.Precio, 0) AS TotalIngresosRecaudados
         FROM Funciones f
         JOIN Salas s ON f.IdSala = s.IdSala
         LEFT JOIN Reservas r ON r.IdFuncion = f.idFuncion
