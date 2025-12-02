@@ -24,10 +24,13 @@ def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
                 return jsonify({'precio': float(precio)})
             elif columns and 'MensajeError' in columns:
                 error_msg = data[0][0]
-                if 'inexistente' in error_msg.lower() or 'no existe' in error_msg.lower():
+                if 'idfunción inválido' in error_msg.lower():
+                    return jsonify({'error': error_msg}), 400
+                if 'función inválida' in error_msg.lower():
                     return jsonify({'error': error_msg}), 404
+                
                 return jsonify({'error': error_msg}), 400
-        return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
+        return jsonify({'error': 'Error al ejecutar procedimiento'}), 500
     except Exception as e:
         error_msg = str(e)
         logging.error(f'Error al correr procedimiento: {str(e)}')
@@ -76,7 +79,7 @@ def reporte_ocupacion() -> Tuple[Response, int]:
                 return jsonify({'error': error_msg}), 400
             reporte = [dict(zip(columns, row)) for row in data]
             return jsonify(reporte)
-        return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
+        return jsonify({'error': 'Error al ejecutar procedimiento'}), 500
     except Exception as e:
         error_msg = str(e)
         logging.error(f'Error al correr procedimiento: {str(e)}')
@@ -128,7 +131,7 @@ def reservar_butaca() -> Tuple[Response, int]:
                     return jsonify({'mensaje': 'Reserva creada exitosamente'}), 201
                 else:
                     return jsonify({'mensaje': mensaje}), 200
-        return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
+        return jsonify({'error': 'Error al ejecutar procedimiento'}), 500
     except Exception as e:
         conn.rollback()
         error_msg = str(e)
