@@ -1,7 +1,8 @@
 import os
 import logging
+from typing import Tuple, Any
 from dotenv import load_dotenv
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, Response
 from flasgger import Swagger, swag_from
 from db import get_db_connection
 from utils import validar_fecha
@@ -19,7 +20,7 @@ swagger = Swagger(app, template={
 
 @app.route('/precios/<int:idFuncion>', methods=['GET'])
 @swag_from('swagger/precios.yml')
-def determinar_precio_entrada(idFuncion):
+def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
     try:
         if not idFuncion or idFuncion <= 0:
             return jsonify({'error': 'idFuncion es requerido y debe ser mayor a 0'}), 400
@@ -55,7 +56,7 @@ def determinar_precio_entrada(idFuncion):
 
 @app.route('/reporte/ocupacion', methods=['GET'])
 @swag_from('swagger/reporte_ocupacion.yml')
-def reporte_ocupacion():
+def reporte_ocupacion() -> Tuple[Response, int]:
     id_pelicula = request.args.get('idPelicula', type=int)
     fecha_inicio = request.args.get('fechaInicio')
     fecha_fin = request.args.get('fechaFin')
@@ -103,7 +104,7 @@ def reporte_ocupacion():
 
 @app.route('/reservas', methods=['POST'])
 @swag_from('swagger/reservas.yml')
-def reservar_butaca():
+def reservar_butaca() -> Tuple[Response, int]:
     data = request.get_json()
     if not data:
         return jsonify({'error': 'Faltan datos para reserva'}), 400
