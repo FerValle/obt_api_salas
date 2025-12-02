@@ -96,13 +96,13 @@ Obtener el precio de una función.
 
 **Ejemplo:**
 ```bash
-curl http://127.0.0.1:5000/precios/1
+curl http://127.0.0.1:5000/precios/14
 ```
 
 **Respuesta:**
 ```json
 {
-  "precio": 1500.00
+  "precio": 3465.00
 }
 ```
 
@@ -117,7 +117,7 @@ Generar reporte de ocupación por película.
 
 **Ejemplo:**
 ```bash
-curl "http://127.0.0.1:5000/reporte/ocupacion?idPelicula=1&fechaInicio=2025-11-01&fechaFin=2025-11-30"
+curl "http://127.0.0.1:5000/reporte/ocupacion?idPelicula=14&fechaInicio=2025-01-01&fechaFin=2025-12-31"
 ```
 
 ### POST /reservas
@@ -127,9 +127,9 @@ Crear una reserva de butaca.
 **Body:**
 ```json
 {
-  "idFuncion": 1,
+  "idFuncion": 12,
   "idButaca": 10,
-  "dni": "12.345.678"
+  "dni": "35.123.789"
 }
 ```
 
@@ -137,41 +137,5 @@ Crear una reserva de butaca.
 ```bash
 curl -X POST http://127.0.0.1:5000/reservas \
   -H "Content-Type: application/json" \
-  -d '{"idFuncion": 1, "idButaca": 10, "dni": "12.345.678"}'
-```
-
-## Estructura del Proyecto
-
-```
-app/
-├── main.py                  # Entry point
-├── config.py                # Configuración centralizada
-├── requirements.txt         # Dependencias
-├── .env                     # Variables de entorno (no commitear)
-├── .env.example            # Template de .env
-├── .gitignore              # Archivos ignorados por git
-│
-├── api/                    # Módulo de API
-│   ├── __init__.py
-│   └── routes.py          # Definición de endpoints
-│
-├── database/              # Módulo de base de datos
-│   ├── __init__.py
-│   └── connection.py     # Conexión a MySQL
-│
-├── utils/                # Utilidades
-│   ├── __init__.py
-│   └── validators.py    # Validaciones (fechas, etc)
-│
-├── swagger/             # Documentación OpenAPI
-│   ├── precios.yml
-│   ├── reporte_ocupacion.yml
-│   └── reservas.yml
-│
-├── sql/                # Scripts de base de datos
-│   ├── set_up_db.sql
-│   ├── inserts/
-│   └── procedures/
-│
-└── logs/              # Archivos de log
+  -d '{"idFuncion": 12, "idButaca": 10, "dni": "35.123.789"}'
 ```
