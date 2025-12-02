@@ -1,21 +1,13 @@
 import logging
 from typing import Tuple
-from flask import Flask, request, jsonify, Response
-from flasgger import Swagger, swag_from
+from flask import Blueprint, request, jsonify, Response
+from flasgger import swag_from
 from database.connection import get_db_connection
 from utils.validators import validar_fecha
 
-app = Flask(__name__)
+api_bp = Blueprint('api', __name__)
 
-swagger = Swagger(app, template={
-    "info": {
-        "title": "API de Reservas de Cine",
-        "description": "API para gestionar reservas, consultar precios y generar reportes de ocupación",
-        "version": "1.0.0"
-    }
-})
-
-@app.route('/precios/<int:idFuncion>', methods=['GET'])
+@api_bp.route('/precios/<int:idFuncion>', methods=['GET'])
 @swag_from('../swagger/precios.yml')
 def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
     try:
@@ -52,7 +44,7 @@ def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
         except Exception as e:
             logging.error(f'Error al cerrar conexión: {str(e)}')
 
-@app.route('/reporte/ocupacion', methods=['GET'])
+@api_bp.route('/reporte/ocupacion', methods=['GET'])
 @swag_from('../swagger/reporte_ocupacion.yml')
 def reporte_ocupacion() -> Tuple[Response, int]:
     id_pelicula = request.args.get('idPelicula', type=int)
@@ -101,7 +93,7 @@ def reporte_ocupacion() -> Tuple[Response, int]:
         except Exception as e:
             logging.error(f'Error al cerrar conexión: {str(e)}')
 
-@app.route('/reservas', methods=['POST'])
+@api_bp.route('/reservas', methods=['POST'])
 @swag_from('../swagger/reservas.yml')
 def reservar_butaca() -> Tuple[Response, int]:
     data = request.get_json()

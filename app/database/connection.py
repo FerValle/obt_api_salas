@@ -1,19 +1,7 @@
-import os
 import logging
-from typing import Any
 import mysql.connector
 from mysql.connector import MySQLConnection, errorcode
 from config import Config
-
-os.makedirs(Config.LOG_DIR, exist_ok=True)
-logging.basicConfig(
-    level=getattr(logging, Config.LOG_LEVEL),
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
-    handlers=[
-        logging.FileHandler(f'{Config.LOG_DIR}/app.log'),
-        logging.StreamHandler()
-    ]
-)
 
 def get_db_connection() -> MySQLConnection:
     """
