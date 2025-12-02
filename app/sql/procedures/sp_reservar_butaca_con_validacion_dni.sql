@@ -10,16 +10,16 @@ SALIR: BEGIN
   DECLARE vMensaje VARCHAR(50);
 
   IF pIdFuncion IS NULL OR pIdFuncion <= 0 THEN
-    SELECT 'Error: pIdFuncion inválido' AS MensajeError;
+    SELECT 'Error: IdFuncion inválido' AS MensajeError;
     LEAVE SALIR;
   END IF;
 
   IF pIdButaca IS NULL OR pIdButaca <= 0 THEN
-    SELECT 'Error: pIdButaca inválido' AS MensajeError;
+    SELECT 'Error: IdButaca inválido' AS MensajeError;
     LEAVE SALIR;
   END IF;
 
-  IF pDNI IS NULL OR LENGTH(TRIM(pDNI)) = 0 OR NOT (TRIM(pDNI) REGEXP '^[0-9]{2}\.[0-9]{3}\.[0-9]{3}$') THEN
+  IF pDNI IS NULL OR NOT (TRIM(pDNI) REGEXP '^[0-9]{2}\.[0-9]{3}\.[0-9]{3}$') THEN
     SELECT 'Error: DNI inválido' AS MensajeError;
     LEAVE SALIR;
   END IF;
