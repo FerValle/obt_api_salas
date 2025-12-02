@@ -14,7 +14,7 @@ class TestReservas:
             'dni': '12.345.678'
         }
         response = client.post('/reservas', json=payload)
-        assert response.status_code in [201, 409]  # 409 si ya está reservada
+        assert response.status_code in [201, 409]
         data = response.get_json()
         assert 'mensaje' in data or 'error' in data
     

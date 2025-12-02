@@ -11,7 +11,7 @@ class TestReporteOcupacion:
         response = client.get(
             '/reporte/ocupacion?idPelicula=1&fechaInicio=2025-01-01&fechaFin=2025-12-31'
         )
-        assert response.status_code in [200, 404]  # 404 si no hay datos
+        assert response.status_code in [200, 404]
         data = response.get_json()
         if response.status_code == 200:
             assert isinstance(data, list)
