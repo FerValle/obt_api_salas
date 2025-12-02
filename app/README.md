@@ -9,7 +9,7 @@ API REST para gestionar reservas, consultar precios de funciones y generar repor
 - **Gestión de reservas**: Crear reservas con validación de DNI y límite de 4 reservas por día
 
 
-## 📋 Requisitos
+## Requisitos
 
 - Python 3.8+
 - MySQL 8.0+
