@@ -20,7 +20,7 @@ API REST para gestionar reservas, consultar precios de funciones y generar repor
 ### 1. Clonar el repositorio
 
 ```bash
-git clone <url-del-repo>
+git clone git@github.com:FerValle/obt_api_salas.git
 cd one_bit_tech/app
 ```
 
