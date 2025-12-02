@@ -1,8 +1,8 @@
 import os
+import logging
 from dotenv import load_dotenv
 from flask import Flask, request,jsonify
 from db import get_db_connection
-
 
 load_dotenv()
 app = Flask(__name__)
@@ -22,16 +22,25 @@ def determinar_precio_entrada(idFuncion):
                 precio = data[0][columns.index('Precio')]
                 return jsonify({'precio': float(precio)})
             elif columns and 'MensajeError' in columns:
-                return jsonify({'error': data[0][0]}), 400
+                error_msg = data[0][0]
+                if 'inexistente' in error_msg.lower() or 'no existe' in error_msg.lower():
+                    return jsonify({'error': error_msg}), 404
+                return jsonify({'error': error_msg}), 400
         return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        error_msg = str(e)
+        if 'foreign key constraint fails' in error_msg.lower():
+            return jsonify({'error': 'La función seleccionada no existe'}), 404
+        elif 'connection' in error_msg.lower() or 'timeout' in error_msg.lower():
+            return jsonify({'error': 'Error de conexión con la base de datos'}), 500
+        else:
+            return jsonify({'error': 'Error al obtener el precio.'}), 500
     finally:
         try:
             cursor.close()
             conn.close()
-        except:
-            pass
+        except Exception as e:
+            logging.error(f'Error al cerrar conexión: {str(e)}')
 
 @app.route('/reporte/ocupacion', methods=['GET'])
 def reporte_ocupacion():
@@ -48,18 +57,83 @@ def reporte_ocupacion():
             data = result.fetchall()
             columns = result.column_names
             if columns and 'MensajeError' in columns:
-                return jsonify({'error': data[0][0]}), 400
+                error_msg = data[0][0]
+                if 'inexistente' in error_msg.lower() or 'no existe' in error_msg.lower():
+                    return jsonify({'error': error_msg}), 404
+                return jsonify({'error': error_msg}), 400
             reporte = [dict(zip(columns, row)) for row in data]
             return jsonify(reporte)
         return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
     except Exception as e:
-        return jsonify({'error': str(e)}), 500
+        error_msg = str(e)
+        if 'foreign key constraint fails' in error_msg.lower():
+            return jsonify({'error': 'La película seleccionada no existe'}), 404
+        elif 'connection' in error_msg.lower() or 'timeout' in error_msg.lower():
+            return jsonify({'error': 'Error de conexión con la base de datos'}), 500
+        else:
+            return jsonify({'error': 'Error al generar el reporte.'}), 500
     finally:
         try:
             cursor.close()
             conn.close()
-        except:
-            pass
+        except Exception as e:
+            logging.error(f'Error al cerrar conexión: {str(e)}')
+
+@app.route('/reservas', methods=['POST'])
+def reservar_butaca():
+    data = request.get_json()
+    if not data:
+        return jsonify({'error': 'Faltan datos para reserva'}), 400
+    
+    id_funcion = data.get('idFuncion')
+    id_butaca = data.get('idButaca')
+    dni = data.get('dni')
+    
+    if not id_funcion or not id_butaca or not dni:
+        return jsonify({'error': 'Faltan parámetros: idFuncion, idButaca, dni'}), 400
+    
+    try:
+        conn = get_db_connection()
+        cursor = conn.cursor()
+        cursor.callproc('sp_ReservarButacaConValidacionDNI', [id_funcion, id_butaca, dni])
+        for result in cursor.stored_results():
+            data = result.fetchall()
+            columns = result.column_names
+            if columns and 'MensajeError' in columns:
+                error_msg = data[0][0]
+                if 'inexistente' in error_msg.lower() or 'no existe' in error_msg.lower():
+                    return jsonify({'error': error_msg}), 404
+                elif 'ya tiene' in error_msg.lower() or 'reservas activas' in error_msg.lower():
+                    return jsonify({'error': error_msg}), 409
+                return jsonify({'error': error_msg}), 400
+            elif columns and 'Mensaje' in columns:
+                mensaje = data[0][0]
+                if mensaje == 'OK':
+                    conn.commit()
+                    return jsonify({'mensaje': 'Reserva creada exitosamente'}), 201
+                else:
+                    return jsonify({'mensaje': mensaje}), 200
+        return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
+    except Exception as e:
+        conn.rollback()
+        error_msg = str(e)
+        if 'foreign key constraint fails' in error_msg.lower():
+            if 'FK_Reservas_Butacas' in error_msg or 'butacas' in error_msg.lower():
+                return jsonify({'error': 'La butaca seleccionada no existe o no pertenece a la sala de la función'}), 404
+            elif 'FK_Reservas_Funciones' in error_msg or 'funciones' in error_msg.lower():
+                return jsonify({'error': 'La función seleccionada no existe'}), 404
+            else:
+                return jsonify({'error': 'Los datos de la reserva son inválidos'}), 400
+        elif 'duplicate entry' in error_msg.lower():
+            return jsonify({'error': 'La butaca ya está reservada para esta función'}), 409
+        else:
+            return jsonify({'error': 'Error al procesar la reserva. Verifique los datos e intente nuevamente'}), 500
+    finally:
+        try:
+            cursor.close()
+            conn.close()
+        except Exception as e:
+            logging.error(f'Error al cerrar conexión: {str(e)}')
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))
