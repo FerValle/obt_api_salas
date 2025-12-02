@@ -129,9 +129,9 @@ CREATE TABLE IF NOT EXISTS `test_db`.`Reservas` (
   `Observaciones` VARCHAR(255) NULL,
   PRIMARY KEY (`idReserva`, `IdFuncion`, `IdPelicula`, `IdSala`, `IdButaca`),
   UNIQUE INDEX `AK_Reservas_IdReserva` (`idReserva` ASC),
+  UNIQUE INDEX `AK_Reservas_IdFuncion_IdButaca` (`IdFuncion`, `IdButaca`),
   INDEX `IDX_Reservas_DNI` (`DNI`),
   INDEX `IDX_Reservas_IdFuncion_DNI` (`IdFuncion`, `DNI`),
-  INDEX `IDX_Reservas_IdFuncion_IdButaca` (`IdFuncion`, `IdButaca`),
   INDEX `FK_Reservas_Funciones_idx` (`IdFuncion` ASC, `IdPelicula` ASC, `IdSala` ASC),
   INDEX `FK_Reservas_Butacas_idx` (`IdButaca` ASC, `IdSala` ASC),
   CONSTRAINT `FK_Reservas_Funciones`
