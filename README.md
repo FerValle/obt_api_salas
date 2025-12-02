@@ -1,4 +1,4 @@
-# API de Reservas de Cine - One Bit Tech
+# API de Salas de cine - One Bit Tech
 
 API REST para gestionar reservas, consultar precios de funciones y generar reportes de ocupación.
 
