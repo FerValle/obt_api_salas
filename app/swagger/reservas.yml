@@ -16,11 +16,11 @@ parameters:
         idFuncion:
           type: integer
           description: ID de la función
-          example: 1
+          example: 12
         idButaca:
           type: integer
           description: ID de la butaca
-          example: 10
+          example: 13
         dni:
           type: string
           description: DNI del cliente (formato XX.XXX.XXX)

@@ -1,13 +1,10 @@
-import os
 import logging
-from typing import Tuple, Any
-from dotenv import load_dotenv
+from typing import Tuple
 from flask import Flask, request, jsonify, Response
 from flasgger import Swagger, swag_from
-from db import get_db_connection
+from database.connection import get_db_connection
 from utils.validators import validar_fecha
 
-load_dotenv()
 app = Flask(__name__)
 
 swagger = Swagger(app, template={
@@ -19,7 +16,7 @@ swagger = Swagger(app, template={
 })
 
 @app.route('/precios/<int:idFuncion>', methods=['GET'])
-@swag_from('swagger/precios.yml')
+@swag_from('../swagger/precios.yml')
 def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
     try:
         if not idFuncion or idFuncion <= 0:
@@ -41,6 +38,7 @@ def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
         return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
     except Exception as e:
         error_msg = str(e)
+        logging.error(f'Error al correr procedimiento: {str(e)}')
         if 'foreign key constraint fails' in error_msg.lower():
             return jsonify({'error': 'La función seleccionada no existe'}), 404
         elif 'connection' in error_msg.lower() or 'timeout' in error_msg.lower():
@@ -55,7 +53,7 @@ def determinar_precio_entrada(idFuncion: int) -> Tuple[Response, int]:
             logging.error(f'Error al cerrar conexión: {str(e)}')
 
 @app.route('/reporte/ocupacion', methods=['GET'])
-@swag_from('swagger/reporte_ocupacion.yml')
+@swag_from('../swagger/reporte_ocupacion.yml')
 def reporte_ocupacion() -> Tuple[Response, int]:
     id_pelicula = request.args.get('idPelicula', type=int)
     fecha_inicio = request.args.get('fechaInicio')
@@ -89,6 +87,7 @@ def reporte_ocupacion() -> Tuple[Response, int]:
         return jsonify({'error': 'Sin respuesta del procedimiento'}), 500
     except Exception as e:
         error_msg = str(e)
+        logging.error(f'Error al correr procedimiento: {str(e)}')
         if 'foreign key constraint fails' in error_msg.lower():
             return jsonify({'error': 'La película seleccionada no existe'}), 404
         elif 'connection' in error_msg.lower() or 'timeout' in error_msg.lower():
@@ -103,7 +102,7 @@ def reporte_ocupacion() -> Tuple[Response, int]:
             logging.error(f'Error al cerrar conexión: {str(e)}')
 
 @app.route('/reservas', methods=['POST'])
-@swag_from('swagger/reservas.yml')
+@swag_from('../swagger/reservas.yml')
 def reservar_butaca() -> Tuple[Response, int]:
     data = request.get_json()
     if not data:
@@ -141,6 +140,7 @@ def reservar_butaca() -> Tuple[Response, int]:
     except Exception as e:
         conn.rollback()
         error_msg = str(e)
+        logging.error(f'Error al correr procedimiento: {str(e)}')
         if 'foreign key constraint fails' in error_msg.lower():
             if 'FK_Reservas_Butacas' in error_msg or 'butacas' in error_msg.lower():
                 return jsonify({'error': 'La butaca seleccionada no existe o no pertenece a la sala de la función'}), 404
@@ -158,8 +158,3 @@ def reservar_butaca() -> Tuple[Response, int]:
             conn.close()
         except Exception as e:
             logging.error(f'Error al cerrar conexión: {str(e)}')
-
-
-if __name__ == '__main__':
-    port = int(os.environ.get('PORT', 5000))
-    app.run(host='127.0.0.1', port=port, debug=True)
