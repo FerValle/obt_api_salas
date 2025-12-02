@@ -79,13 +79,9 @@ DEBUG=True
 ### Modo desarrollo
 
 ```bash
-python main.py
+python app.py
 ```
-
-La API estará disponible en `http://127.0.0.1:5000`
-
-### Ver documentación
-
+### Para consultar API:
 Abrir en el navegador: `http://127.0.0.1:5000/apidocs`
 
 ## Endpoints
