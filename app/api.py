@@ -1,13 +1,24 @@
 import os
 import logging
 from dotenv import load_dotenv
-from flask import Flask, request,jsonify
+from flask import Flask, request, jsonify
+from flasgger import Swagger, swag_from
 from db import get_db_connection
+from utils import validar_fecha
 
 load_dotenv()
 app = Flask(__name__)
 
+swagger = Swagger(app, template={
+    "info": {
+        "title": "API de Reservas de Cine",
+        "description": "API para gestionar reservas, consultar precios y generar reportes de ocupación",
+        "version": "1.0.0"
+    }
+})
+
 @app.route('/precios/<int:idFuncion>', methods=['GET'])
+@swag_from('swagger/precios.yml')
 def determinar_precio_entrada(idFuncion):
     try:
         if not idFuncion or idFuncion <= 0:
@@ -43,12 +54,23 @@ def determinar_precio_entrada(idFuncion):
             logging.error(f'Error al cerrar conexión: {str(e)}')
 
 @app.route('/reporte/ocupacion', methods=['GET'])
+@swag_from('swagger/reporte_ocupacion.yml')
 def reporte_ocupacion():
     id_pelicula = request.args.get('idPelicula', type=int)
     fecha_inicio = request.args.get('fechaInicio')
     fecha_fin = request.args.get('fechaFin')
+    
     if not id_pelicula or not fecha_inicio or not fecha_fin:
         return jsonify({'error': 'Faltan parámetros: idPelicula, fechaInicio, fechaFin'}), 400
+    
+    error_response, status_code = validar_fecha(fecha_inicio, 'fechaInicio')
+    if error_response:
+        return error_response, status_code
+    
+    error_response, status_code = validar_fecha(fecha_fin, 'fechaFin')
+    if error_response:
+        return error_response, status_code
+    
     try:
         conn = get_db_connection()
         cursor = conn.cursor()
@@ -80,6 +102,7 @@ def reporte_ocupacion():
             logging.error(f'Error al cerrar conexión: {str(e)}')
 
 @app.route('/reservas', methods=['POST'])
+@swag_from('swagger/reservas.yml')
 def reservar_butaca():
     data = request.get_json()
     if not data:
@@ -134,6 +157,7 @@ def reservar_butaca():
             conn.close()
         except Exception as e:
             logging.error(f'Error al cerrar conexión: {str(e)}')
+
 
 if __name__ == '__main__':
     port = int(os.environ.get('PORT', 5000))

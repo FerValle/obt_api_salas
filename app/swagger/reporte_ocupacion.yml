@@ -1,0 +1,57 @@
+Generar reporte de ocupación por película
+---
+tags:
+  - Reportes
+parameters:
+  - name: idPelicula
+    in: query
+    type: integer
+    required: true
+    description: ID de la película
+    example: 14
+  - name: fechaInicio
+    in: query
+    type: string
+    format: date
+    required: true
+    description: Fecha de inicio del reporte (YYYY-MM-DD)
+    example: "2025-01-15"
+  - name: fechaFin
+    in: query
+    type: string
+    format: date
+    required: true
+    description: Fecha de fin del reporte (YYYY-MM-DD)
+    example: "2025-12-31"
+responses:
+  200:
+    description: Reporte generado exitosamente
+    schema:
+      type: array
+      items:
+        type: object
+        properties:
+          idFuncion:
+            type: integer
+            example: 23
+          HoraInicio:
+            type: string
+            example: "15:30:00"
+          IdSala:
+            type: integer
+            example: 3
+          NombreSala:
+            type: string
+            example: "Sala 3 - Cines del Solar"
+          TotalButacasVendidas:
+            type: integer
+            example: 5
+          TotalIngresosRecaudados:
+            type: string
+            example: "9000.00"
+  400:
+    description: Parámetros faltantes o inválidos
+  404:
+    description: Película no encontrada
+  500:
+    description: Error interno del servidor
