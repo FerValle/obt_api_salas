@@ -6,6 +6,7 @@ Tests de integración que validan los endpoints de la API contra la base de dato
 
 Todos los tests:
 ```bash
+cd app
 pytest
 ```
 

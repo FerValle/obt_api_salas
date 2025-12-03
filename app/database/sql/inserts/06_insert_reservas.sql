@@ -1,4 +1,3 @@
--- delete from reservas where idreserva !=0;
 -- Wicked - 3D
 INSERT INTO `test_db`.`Reservas` 
 (`IdReserva`, `IdFuncion`, `IdPelicula`, `IdSala`, `IdButaca`, `DNI`, `FechaAlta`, `FechaBaja`, `EstaPagada`, `Observaciones`) VALUES
@@ -32,9 +31,6 @@ INSERT INTO `test_db`.`Reservas`
 (18, 11, 13, 3, 9, '33.100.200', '2025-11-27 13:10:00', NULL, 'S', NULL),
 (19, 15, 15, 4, 15, '33.100.200', '2025-11-29 13:10:00', NULL, 'S', NULL),
 (20, 15, 15, 4, 19, '33.100.200', '2025-11-29 13:10:00', NULL, 'S', NULL);
- -- delete from butacas where idbutaca !=0;
-  -- 
-  -- delete from reservas where idreserva!=0;
 
 -- Shelby Oaks
 INSERT INTO `test_db`.`Reservas` 

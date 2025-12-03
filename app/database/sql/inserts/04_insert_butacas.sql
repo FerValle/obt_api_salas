@@ -13,8 +13,7 @@ INSERT INTO `test_db`.`Butacas`
 (6, 2, 1, 7, 4, 'A', NULL),
 (7, 2, 2, 7, 5, 'A', NULL),
 (8, 2, 3, 7, 6, 'A', NULL);
--- select * from butacas;
--- delete from butacas where idbutaca !=0;
+
 -- Sala 3 - Cines del Solar - 3D
 INSERT INTO `test_db`.`Butacas` 
 (`idButaca`, `IdSala`, `NroButaca`, `Fila`, `Columna`, `Estado`, `Observaciones`) VALUES

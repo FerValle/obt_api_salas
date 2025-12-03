@@ -20,7 +20,7 @@ parameters:
         idButaca:
           type: integer
           description: ID de la butaca
-          example: 13
+          example: 10
         dni:
           type: string
           description: DNI del cliente (formato XX.XXX.XXX)
